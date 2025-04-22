@@ -1,5 +1,5 @@
 import React from "react";
-import axios from 'axios/dist/browser/axios.cjs';
+import axios from 'axios';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {Typography, Button, Form, Input, Alert } from "antd";

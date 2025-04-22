@@ -17,8 +17,7 @@ export default function Register(){
         try {
             const response = await axios.post('http://localhost:3000/users', {
                 email : values.email,
-                password : values.password,
-                password_confirmation : values.confirm_password,
+                password : values.password
             }) 
             
             localStorage.setItem('user', JSON.stringify(response.data));
@@ -56,10 +55,6 @@ export default function Register(){
             </Form.Item>
 
             <Form.Item label="Password" name="password" rules={[{ required: true, message: 'Please input your password!' }]}>
-                <Input.Password />
-            </Form.Item>
-
-            <Form.Item label="Retype Password" name="confirm_password" rules={[{ required: true, message: 'Please input your again password!' }]}>
                 <Input.Password />
             </Form.Item>
 
