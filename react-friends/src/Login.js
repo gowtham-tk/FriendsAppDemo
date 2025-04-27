@@ -14,7 +14,7 @@ export default function Login(){
     const onFinish = async (values) => {
         console.log('Success:', values);
         try {
-            const response = await axios.post('http://localhost:3000/login', {
+            const response = await axios.post('http://localhost:3001/login', {
                 email : values.email,
                 password : values.password
             }) 

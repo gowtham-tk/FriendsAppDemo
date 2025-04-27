@@ -1,0 +1,8 @@
+services:
+  friends_app:
+    build: .
+    container_name: friends_c
+    ports:
+      - "3001:3001"
+    stdin_open: true
+    tty: true

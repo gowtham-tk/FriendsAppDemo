@@ -15,7 +15,7 @@ export default function Register(){
     const onFinish = async (values) => {
         console.log('Success:', values);
         try {
-            const response = await axios.post('http://localhost:3000/users', {
+            const response = await axios.post('http://localhost:3001/users', {
                 email : values.email,
                 password : values.password
             }) 

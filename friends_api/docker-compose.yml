@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  server-db:
+    image: postgres
+    container_name: server-db
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "admin"
+    ports:
+      - "5433:5432"
+    networks:
+      - server-api-network
+
+  server-api:
+    image: server-api
+    container_name: server-api
+    build: .
+    environment:
+      - DBHOST=${POSTGRES_DB}
+      - DBUSER=postgres
+      - DBPASS=admin
+    volumes:
+      - .:/server-api
+    ports:
+      - "5000:3000"
+    depends_on:
+      - server-db
+    networks:
+      - server-api-network
+
+networks:
+  server-api-network:
+    driver: bridge
+
+volumes:
+  postgres:

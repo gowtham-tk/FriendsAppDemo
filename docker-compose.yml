@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: FriendsAPI_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build: ./friends_api
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: admin
+      DATABASE_NAME: FriendsAPI_dev
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./friends_api:/app
+    command: bash -c "rm -f tmp/pids/server.pid && rails server -b 0.0.0.0 -p 3001"
+
+  frontend:
+    build: ./react-friends
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./react-friends:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

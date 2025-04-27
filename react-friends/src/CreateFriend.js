@@ -16,7 +16,7 @@ export default function CreateFriend({ onFriendAdded }){
           //console.log(parsedUser.user.id)
       
           try {
-            const response = await axios.post("http://localhost:3000/friends", {
+            const response = await axios.post("http://localhost:3001/friends", {
               friend: {
                 first_name: values.firstname,
                 last_name: values.lastname,

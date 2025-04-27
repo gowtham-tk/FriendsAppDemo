@@ -45,7 +45,7 @@ export default function LandingPage(){
 
         try{
             await axios.patch(
-                `http://localhost:3000/friends/${friend.id}`,
+                `http://localhost:3001/friends/${friend.id}`,
                 {
                   friend: { wished: updateWished }
                 },
@@ -68,7 +68,7 @@ export default function LandingPage(){
         if (storedUser) {
             const parsedUser = JSON.parse(storedUser);
             try{
-                await axios.delete(`http://localhost:3000/friends/${id}`,
+                await axios.delete(`http://localhost:3001/friends/${id}`,
                     {
                         headers: {
                             Authorization: `Bearer ${parsedUser.token}`,
@@ -84,7 +84,11 @@ export default function LandingPage(){
     };
 
     const handleFriendAdded = (newFriend) => {
-        setFriends(prev => [...prev, newFriend]);
+        setFriends(prev => {
+            const updateFriends = [...prev, newFriend];
+            //return updateFriends.sort((a, b) => a.firstname.localeCompare(b.firstname));
+            return updateFriends;
+        });
     };
 
 
@@ -96,7 +100,7 @@ export default function LandingPage(){
             //const token = user.token;
             const fetchFriends = async () => {
                 try {
-                    const friendsResponse = await axios.get("http://localhost:3000/friends",{
+                    const friendsResponse = await axios.get("http://localhost:3001/friends",{
                         headers : {
                             Authorization : `Bearer ${JSON.parse(storedUser).token}`,
                         },
@@ -118,7 +122,7 @@ export default function LandingPage(){
     }
 
     return (
-        <div>
+        <div className="min-h-screen">
             <Text>Landing Page</Text>
             { user ? (
                 <div>
