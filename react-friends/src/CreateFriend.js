@@ -1,9 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Input, Space, Button } from "antd";
 import { DatePicker } from "antd";
 import axios from "axios";
+import "./CreateFriend.css";
+import dayjs from "dayjs";
 
-export default function CreateFriend({ onFriendAdded }){
+export default function CreateFriend({ onFriendAdded, friend, onSuccess }){
+
+    /*const [formData, setFormData] = useState({
+      firstname: '',
+      lastname: '',
+      dob: '',
+      phone: '',
+      email: '',
+    });*/
+
+    const [form] = Form.useForm();
+
+    useEffect(() => {
+      if (friend) {
+        form.setFieldsValue({
+          firstname: friend.first_name || '',
+          lastname: friend.last_name || '',
+          email: friend.email || '',
+          phone: friend.phone || '',
+          dob: friend.dob ? dayjs(new Date(friend.dob)) : null,
+        });
+      } else {
+        form.resetFields();
+      }
+    }, [friend]);
+
     const onChange = (date, dateString) => {
         console.log(date, dateString);
       };
@@ -16,24 +43,42 @@ export default function CreateFriend({ onFriendAdded }){
           //console.log(parsedUser.user.id)
       
           try {
-            const response = await axios.post("http://localhost:3001/friends", {
-              friend: {
-                first_name: values.firstname,
-                last_name: values.lastname,
-                dob: values.dob,
-                phone: values.phone,
-                email: values.email,
-                wished: false,
-                user_id: parsedUser.user.id
+
+            if(friend) {
+              await axios.put(`http://localhost:3001/friends/${friend.id}`,{
+                friend: {
+                  ...values,
+                  first_name: values.firstname,
+                  last_name: values.last_name,
+                } 
+              },{
+                headers: {
+                  Authorization: `Bearer ${parsedUser.token}`,
+                }
               }
-            }, {
-              headers: {
-                Authorization: `Bearer ${parsedUser.token}`
-              }
-            });
-      
-            console.log("Friend added successfully");
-            onFriendAdded(response.data);
+            )
+            } else {
+
+              const response = await axios.post("http://localhost:3001/friends", {
+                friend: {
+                  first_name: values.firstname,
+                  last_name: values.lastname,
+                  dob: values.dob,
+                  phone: values.phone,
+                  email: values.email,
+                  wished: false,
+                  user_id: parsedUser.user.id
+                }
+              }, {
+                headers: {
+                  Authorization: `Bearer ${parsedUser.token}`
+                }
+              });
+        
+              console.log("Friend added successfully");
+              onFriendAdded(response.data);
+            }
+            onSuccess();
           } catch (error) {
             console.log("Error creating friend:", error);
           }
@@ -45,9 +90,9 @@ export default function CreateFriend({ onFriendAdded }){
     };
 
     return (
-        <div>
-            <Form name="basic" labelCol={{ span: 8}} wrapperCol={{ span: 16 }} style={{ maxWidth: 600}}
-                initialValues={{ remember: true}} onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="on">
+        <div className="center-div">
+            <Form form={form} name="basic" labelCol={{ span: 8}} wrapperCol={{ span: 16 }} style={{ maxWidth: 600}}
+                onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="on">
 
                 <Form.Item label="First Name" name="firstname">
                     <Input/>
@@ -66,7 +111,7 @@ export default function CreateFriend({ onFriendAdded }){
                 </Form.Item> 
                 <Form.Item label={null}>
                     <Button type="primary" htmlType="submit">
-                        Submit
+                        {friend ? "Update Friend" : "Create Friend"}
                     </Button>
                 </Form.Item>
             </Form>

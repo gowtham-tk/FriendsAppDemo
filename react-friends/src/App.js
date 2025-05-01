@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Typography, Layout, Menu } from "antd";
+import { Typography, Layout, Menu, Button } from "antd";
 import LandingPage from "./LandingPage";
 import Login from "./Login";
 import Register from "./Register";
@@ -48,21 +48,19 @@ function App() {
                         </div>
                         <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                             <div className="flex shrink-0 items-center">
-                                <h2>Remember Friends App</h2>
+                              <h2 class="mb-4 font-extrabold text-gray-900 dark:text-white"><span class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Remember Friends App</span></h2>
                             </div>
-                            <div className="hidden sm:ml-6 sm:block">
-                              <div className="flex space-x-4">
-                                <Link to="/" className="text-gray-700 hover:text-blue-600">Home</Link>
+                            <div className="hidden sm:flex ml-auto space-x-4 items-center">
+                                <Link to="/" className="object-left text-gray-700 hover:text-blue-600">Home</Link>
                                 { user === '' ? (
                                   <>
-                                    <Link to="/login" className="text-gray-700 hover:text-blue-600">Login</Link>
-                                    <Link to="/register" className="text-gray-700 hover:text-blue-600">Register</Link>
+                                    <Link to="/login" className="object-left text-gray-700 hover:text-blue-600">Login</Link>
+                                    <Link to="/register" className="object-left text-gray-700 hover:text-blue-600">Register</Link>
                                   </>
                                   ) : (
-                                    <button onClick={signout} className="text-gray-700 hover:text-blue-600">Signout</button>
+                                    <Button type="primary" danger onClick={signout}>Signout</Button>
                                   )
                                 }
-                              </div>
                             </div>
 
                         </div>
@@ -76,10 +74,14 @@ function App() {
                             { user === '' ? (
                                   <>
                                     <Link to="/login" className="text-gray-700 hover:text-blue-600">Login</Link>
+                                    <br></br>
                                     <Link to="/register" className="text-gray-700 hover:text-blue-600">Register</Link>
                                   </>
                                   ) : (
-                                    <button onClick={signout} className="text-gray-700 hover:text-blue-600">Signout</button>
+                                    <>
+                                    <br></br>
+                                    <Button type="primary" danger onClick={signout}>Signout</Button>
+                                    </>
                                   )
                                 }
                           </div>

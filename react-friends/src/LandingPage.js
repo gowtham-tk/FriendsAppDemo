@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {Button, Table} from "antd";
+import {Button} from "antd";
 import {Typography} from "antd";
 import axios from "axios";
+import Tables from "./Tables";
+import "./LandingPage.css";
 
 import CreateFriend from "./CreateFriend";
 
@@ -12,76 +14,11 @@ export default function LandingPage(){
     const [user, setUser] = useState('');
     const [friends, setFriends] = useState([]);
     const [showForm, setShowForm] = useState(false);
+    const [editFriend, setEditFriend] = useState(null);
+
 
     const navigate = useNavigate();
 
-    const columns = [
-        { title: 'First Name', dataIndex: 'first_name', key: 'first_name' },
-        { title: 'Last Name', dataIndex: 'last_name', key: 'last_name' },
-        { title: 'Email', dataIndex: 'email', key: 'email' },
-        { title: 'Phone', dataIndex: 'phone', key: 'phone' },
-        { title: 'Date of Birth', dataIndex: 'dob', key: 'dob' },
-        { title: 'Wished', dataIndex: 'wished', key: 'wished', render: (value, record) => (
-            <span
-              style={{ cursor: 'pointer' }}
-              onClick={() => toggleWished(record)}
-            >
-              {value ? '✅ Yes' : '❌ No'}
-            </span>
-          ) },
-        { title: 'Created At', dataIndex: 'created_at', key: 'created_at' },
-        { title: 'Delete', dataIndex: 'delete', key: 'delete', render: (text, record) => 
-            (
-            <Button type="link" danger onClick={() => handleDelete(record.id)}>
-                Delete
-              </Button>
-            ),
-        },
-      ];
-
-    const toggleWished = async (friend) => {
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-        const updateWished = !friend.wished;
-
-        try{
-            await axios.patch(
-                `http://localhost:3001/friends/${friend.id}`,
-                {
-                  friend: { wished: updateWished }
-                },
-                {
-                  headers: {
-                    Authorization: `Bearer ${storedUser.token}`,
-                  }
-                }
-              );
-            setFriends(prev => 
-                prev.map(f => f.id === friend.id ? { ...f, wished: updateWished} : f)
-            );
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const handleDelete = async (id) => {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            const parsedUser = JSON.parse(storedUser);
-            try{
-                await axios.delete(`http://localhost:3001/friends/${id}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${parsedUser.token}`,
-                          },
-                    }
-                );
-                console.log("Deleted !");
-                setFriends(prev => prev.filter(friend => friend.id !== id));
-            } catch (error) {
-                console.log(error);
-            }
-        };
-    };
 
     const handleFriendAdded = (newFriend) => {
         setFriends(prev => {
@@ -121,22 +58,34 @@ export default function LandingPage(){
         navigate("/login");
     }
 
+    const handleModify = (friend) => {
+        setEditFriend(friend);
+        setShowForm(true);
+    }
+
     return (
         <div className="min-h-screen">
-            <Text>Landing Page</Text>
+            <h1 class="text-center mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl"><span class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Remember Friends App</span></h1>
             { user ? (
-                <div>
+                <div className="text-center">
                     <h2>Hello {user.user.email} </h2>
-                    <Button type="primary" danger onClick={signout}>Signout</Button>
-                    <Button type="primary" onClick={() => setShowForm(!showForm)}>
-                        {showForm ? 'Hide Create Friend' : 'Create Friend'}
-                    </Button>
-                    {showForm && <CreateFriend onFriendAdded={handleFriendAdded}/>}
-                    <Table columns={columns} dataSource={friends} rowKey="id" />
+                    { !showForm &&
+                        <Button type="primary" className="create-friend-btn" onClick={() => setShowForm(true)}>
+                            Create Friend
+                        </Button>
+                    }
+                    {showForm && <CreateFriend onFriendAdded={handleFriendAdded} friend={editFriend} onSuccess={()=>{setShowForm(false); setEditFriend(null);}}/>}
+                    { showForm &&
+                        <Button type="primary" className="create-friend-btn" onClick={() => {setShowForm(false); setEditFriend(null);}}>
+                            Cancel
+                        </Button>
+                    }
+                    <Tables onModify={handleModify}></Tables>
                 </div>
             ) : (
-                <div>
+                <div className="text-center place-items-center">
                     <h2>Login/Register to Continue</h2>
+                    <br></br>
                     <Link to="/login">
                         <Button type="primary" >Login</Button>
                     </Link>

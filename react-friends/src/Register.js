@@ -14,10 +14,17 @@ export default function Register(){
     
     const onFinish = async (values) => {
         console.log('Success:', values);
+        if (values.password !== values.confirm_password) {
+            setError('Password and Confirm Password don\'t match');
+            return;
+        }
         try {
             const response = await axios.post('http://localhost:3001/users', {
-                email : values.email,
-                password : values.password
+                user: {
+                    email : values.email,
+                    password : values.password,
+                    password_confirmation: values.confirm_password
+                }
             }) 
             
             localStorage.setItem('user', JSON.stringify(response.data));
@@ -41,7 +48,7 @@ export default function Register(){
     return (
     <div className="min-h-screen" style={{ textAlign: 'center', margin: '20px 0', alignItems: 'center'  }}>
         {success && <Alert message="Registration Successful!" type="success" showIcon></Alert>}
-        {error && <Alert message="UnSuccessful Registration!" type="error" showIcon></Alert>}
+        {error && <Alert message={error} type="error" showIcon></Alert>}
 
         <div style={{ margin: "20px 20px"}}>
             <Text strong style={{ fontSize: '20px', color: '#1890ff' }}>Registration Page</Text>
@@ -55,6 +62,10 @@ export default function Register(){
             </Form.Item>
 
             <Form.Item label="Password" name="password" rules={[{ required: true, message: 'Please input your password!' }]}>
+                <Input.Password />
+            </Form.Item>
+
+            <Form.Item label="Confirm Password" name="confirm_password" rules={[{ required: true, message: 'Please input your confirm password!' }]}>
                 <Input.Password />
             </Form.Item>
 
