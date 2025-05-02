@@ -1,34 +1,41 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {Button} from "antd";
-import {Typography} from "antd";
-import axios from "axios";
+//import axios from "axios";
 import Tables from "./Tables";
 import "./LandingPage.css";
 
 import CreateFriend from "./CreateFriend";
 
-const { Text } = Typography;
-
 export default function LandingPage(){
     const [user, setUser] = useState('');
-    const [friends, setFriends] = useState([]);
+    //const [friends, setFriends] = useState([]);
     const [showForm, setShowForm] = useState(false);
     const [editFriend, setEditFriend] = useState(null);
+    const [refreshFlag, setRefreshFlag] = useState(false);
 
 
-    const navigate = useNavigate();
+
+    //const navigate = useNavigate();
 
 
     const handleFriendAdded = (newFriend) => {
-        setFriends(prev => {
+        setRefreshFlag(prev => !prev);
+        /*setFriends(prev => {
             const updateFriends = [...prev, newFriend];
             //return updateFriends.sort((a, b) => a.firstname.localeCompare(b.firstname));
             return updateFriends;
-        });
+        });*/
     };
 
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, [])
 
+    /*
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
@@ -52,15 +59,17 @@ export default function LandingPage(){
             fetchFriends();
         }
     }, []);
-
+    */
+   /*
     function signout() {
         localStorage.setItem('user', '');
         navigate("/login");
-    }
+    }*/
 
     const handleModify = (friend) => {
         setEditFriend(friend);
         setShowForm(true);
+        setRefreshFlag(prev => !prev);
     }
 
     return (
@@ -80,7 +89,7 @@ export default function LandingPage(){
                             Cancel
                         </Button>
                     }
-                    <Tables onModify={handleModify}></Tables>
+                    <Tables onModify={handleModify} refreshFlag={refreshFlag}></Tables>
                 </div>
             ) : (
                 <div className="text-center place-items-center">

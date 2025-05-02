@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Typography, Layout, Menu, Button } from "antd";
+import { Layout, Button } from "antd";
 import LandingPage from "./LandingPage";
 import Login from "./Login";
 import Register from "./Register";
 import { useNavigate } from "react-router-dom";
 
-const { Header, Content } = Layout;
-const { Title } = Typography;
+const { Content } = Layout;
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -22,7 +21,7 @@ function App() {
     } else {
       setUser('');
     }
-  },  [user]);
+  }, []);
 
   function signout() {
     localStorage.setItem('user', '');

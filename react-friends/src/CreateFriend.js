@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Form, Input, Space, Button } from "antd";
+import React, { useEffect } from "react";
+import { Form, Input, Button } from "antd";
 import { DatePicker } from "antd";
 import axios from "axios";
 import "./CreateFriend.css";
@@ -7,13 +7,6 @@ import dayjs from "dayjs";
 
 export default function CreateFriend({ onFriendAdded, friend, onSuccess }){
 
-    /*const [formData, setFormData] = useState({
-      firstname: '',
-      lastname: '',
-      dob: '',
-      phone: '',
-      email: '',
-    });*/
 
     const [form] = Form.useForm();
 
@@ -29,11 +22,7 @@ export default function CreateFriend({ onFriendAdded, friend, onSuccess }){
       } else {
         form.resetFields();
       }
-    }, [friend]);
-
-    const onChange = (date, dateString) => {
-        console.log(date, dateString);
-      };
+    }, [friend, form]);
 
       const onFinish = async (values) => {
         const storedUser = localStorage.getItem('user');
@@ -45,25 +34,28 @@ export default function CreateFriend({ onFriendAdded, friend, onSuccess }){
           try {
 
             if(friend) {
+              //console.log(values.dob);
               await axios.put(`http://localhost:3001/friends/${friend.id}`,{
                 friend: {
                   ...values,
                   first_name: values.firstname,
-                  last_name: values.last_name,
+                  last_name: values.lastname,
+                  dob: values.dob.format("YYYY-MM-DD")
                 } 
               },{
                 headers: {
                   Authorization: `Bearer ${parsedUser.token}`,
                 }
               }
-            )
+              )
+              onFriendAdded();
             } else {
-
+              //console.log(values.dob);
               const response = await axios.post("http://localhost:3001/friends", {
                 friend: {
                   first_name: values.firstname,
                   last_name: values.lastname,
-                  dob: values.dob,
+                  dob: values.dob.format("YYYY-MM-DD"),
                   phone: values.phone,
                   email: values.email,
                   wished: false,
